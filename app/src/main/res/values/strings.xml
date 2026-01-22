@@ -1,9 +1,20 @@
 <resources>
     <string name="app_name">Recipes Book</string>
-<<<<<<< HEAD
     <string name="recipe_app">Recipe App!</string>
-=======
+    =======
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
->>>>>>> main
+    <string name="log_in_to_your_account">Login to your account\n</string>
+    <string name="email">Email</string>
+    <string name="enter_your_email">Enter your email\n</string>
+    <string name="password">Password\n</string>
+    <string name="enter_your_password">Enter your password\n</string>
+    <string name="forgot_password">Forgot Password ?\n</string>
+    <string name="login">Login\n</string>
+    <string name="don_t_have_an_account">Dont have an account\n</string>
+    <string name="get_started">Get Started\n</string>
+    <string name="sup_title_on_boarding">There is no need to fear failure. Tested recipes are guaranteed to work by our professional chefs.</string>
+    <string name="thousands_of_tested_recipes">Thousands of tested recipes</string>
+
+    >>>>>>> main
 </resources>

@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -45,6 +47,24 @@ dependencies {
     implementation libs.sdp.android
     implementation libs.ssp.android
 
+
+    // integration with firebase
+    implementation platform('com.google.firebase:firebase-bom:34.8.0')
+
+    // Analytics
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Authentication
+    implementation 'com.google.firebase:firebase-auth'
+
+    // Firestore
+    implementation 'com.google.firebase:firebase-firestore'
+
+    // Realtime Database
+    implementation 'com.google.firebase:firebase-database'
+
+    // Cloud Storage
+    implementation 'com.google.firebase:firebase-storage'
 
 
 }

@@ -15,6 +15,11 @@
         android:theme="@style/Theme.RecipesBook"
         tools:targetApi="31">
         <activity
+            android:name=".ui_screens.RegisterScreen"
+            android:exported="false">
+
+        </activity>
+        <activity
             android:name=".ui_screens.OnBoardingScreen"
             android:exported="false" />
         <activity

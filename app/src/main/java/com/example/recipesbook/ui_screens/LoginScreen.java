@@ -7,18 +7,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.recipesbook.R;
+
+
 import com.example.recipesbook.databinding.ActivityLoginScreenBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginScreen extends AppCompatActivity {
-    private ActivityLoginScreenBinding binding;
+    private ActivityLoginScreenBinding binding ;
     private final Context context = LoginScreen.this;
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
@@ -26,8 +23,10 @@ public class LoginScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityLoginScreenBinding.inflate(getLayoutInflater());
+        binding= ActivityLoginScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding.tvDonTHaveAnAccount.setOnClickListener(view -> startActivity(new Intent(context, RegisterScreen.class)));
+
 
         firebaseAuth = FirebaseAuth.getInstance();
         login();

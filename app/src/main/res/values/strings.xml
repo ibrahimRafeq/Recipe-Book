@@ -52,6 +52,9 @@
     <string name="viedeo_tutorial">Viedeo Tutorial</string>
     <string name="logout">Logout</string>
     <string name="edite_recipe">Edite Recipe</string>
+    <string name="enter_your_email_to_change_password">Enter your email to change password</string>
+    <string name="change_email">Change email?</string>
+    <string name="reset_password">Reset Password</string>
 
 
     >>>>>>> main

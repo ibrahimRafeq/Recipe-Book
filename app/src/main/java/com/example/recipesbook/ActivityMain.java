@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.recipesbook.databinding.ActivityMainBinding;
-import com.example.recipesbook.ui_screens.LoginScreen;
 import com.example.recipesbook.ui_screens.OnBoardingScreen;
 
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.recipesbook.databinding.ActivityProfiloBinding;
@@ -73,5 +72,11 @@ public class ProfiloActivity extends AppCompatActivity {
         });
 
 
+        binding.bntSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.settingsDrawer.openDrawer(Gravity.LEFT);
+            }
+        });
     }
 }

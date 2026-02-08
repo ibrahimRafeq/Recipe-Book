@@ -49,9 +49,9 @@ public class LoginScreen extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 String userId = firebaseAuth.getCurrentUser().getUid();
                                 saveLoginSession(email, userId);
-                                //  startActivity(new Intent(context, MainHomePage.class));
+                                 startActivity(new Intent(context, MainHomePage.class));
                                 Toast.makeText(context, "Logged is Successfully", Toast.LENGTH_SHORT).show();
-//                                finish();
+                               finish();
                             } else {
                                 Toast.makeText(this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }

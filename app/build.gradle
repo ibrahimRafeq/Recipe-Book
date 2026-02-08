@@ -68,6 +68,9 @@ dependencies {
 
     // Cloud Storage
     implementation 'com.google.firebase:firebase-storage'
+    // Picasso for image loading
+    implementation 'com.squareup.picasso:picasso:2.8'
+
 
 
 }

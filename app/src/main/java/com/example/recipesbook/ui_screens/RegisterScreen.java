@@ -10,90 +10,106 @@ import android.provider.MediaStore;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.recipesbook.R;
 import com.example.recipesbook.databinding.ActivityRegisterScreenBinding;
 import com.example.recipesbook.models.UserModel;
+import com.example.recipesbook.utils.AuthManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class RegisterScreen extends AppCompatActivity {
-    ActivityRegisterScreenBinding binding;
-    private final Context context = RegisterScreen.this;
-    private ActivityResultLauncher<Intent> imagePickerLauncher;
+
+    private ActivityRegisterScreenBinding binding;
+    private Context context;
+    private Bitmap bitmap;
     private Uri selectedImageUri;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
     private ProgressDialog progressDialog;
+    private AuthManager authManager;
+
+    // لاختيار الصورة
+    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        // استخدم URI فقط لتجنب الكراش
+                        selectedImageUri = result.getData().getData();
+                        if (selectedImageUri != null) {
+                            binding.imageProfile.setImageURI(selectedImageUri);
+                        } else {
+                            Toast.makeText(context, "Failed to get image", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding= ActivityRegisterScreenBinding.inflate(getLayoutInflater());
+        binding = ActivityRegisterScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        context = this;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
+        authManager = new AuthManager(this);
 
-        binding.tvHaveAAccount.setOnClickListener(v -> finish());
-        binding.btnSignUp.setOnClickListener(v -> checkData());
-
-        showLoadingDialog();
         setupCountrySpinner();
-        initImagePicker();
-        pickImage();
-
+        setupClickListeners();
+        setupProgressDialog();
     }
-    private void initImagePicker() {
-        imagePickerLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        selectedImageUri = result.getData().getData();
-                        binding.imageProfile.setImageURI(selectedImageUri);
-                    }
-                }
-        );
-    }
-
-    private void pickImage() {
-        binding.imageProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("image/*");
-            imagePickerLauncher.launch(intent);
-        });
-    }
-
 
     private void setupCountrySpinner() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.countries_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerCountry.setAdapter(adapter);
-        binding.spinnerCountry.setSelection(0);
     }
+
+    private void setupClickListeners() {
+        binding.tvHaveAAccount.setOnClickListener(v -> finish());
+
+        binding.btnSignUp.setOnClickListener(v -> checkData());
+
+        binding.imageProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            launcher.launch(intent);
+        });
+    }
+
+    private void setupProgressDialog() {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
+    }
+
     private boolean isValidEmail(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
+
     private void checkData() {
         String username = binding.edUsername.getEditText().getText().toString().trim();
         String email = binding.edEmail.getEditText().getText().toString().trim();
         String password = binding.edPassword.getEditText().getText().toString().trim();
         String confirmPassword = binding.edConfirmPassword.getEditText().getText().toString().trim();
+        String country = binding.spinnerCountry.getSelectedItem().toString();
 
         boolean isValid = true;
 
@@ -131,63 +147,70 @@ public class RegisterScreen extends AppCompatActivity {
             isValid = false;
         }
 
-        if (selectedImageUri == null) {
-            Toast.makeText(this, "Please select a profile image", Toast.LENGTH_SHORT).show();
+        // تحويل URI إلى bitmap إذا موجود
+        if (selectedImageUri != null) {
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(context, "Failed to process selected image", Toast.LENGTH_SHORT).show();
+                isValid = false;
+            }
+        } else {
+            Toast.makeText(context, "Please select a profile image", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
 
         if (isValid) {
-            createUserInFirebase(username,email,password,selectedImageUri.toString(),binding.spinnerCountry.getSelectedItem().toString());
+            registerUser(username, email, password, country);
         }
     }
-    private void showLoadingDialog() {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please wait...");
-        progressDialog.setCancelable(false);
-    }
-    private void createUserInFirebase(String username, String email, String password, String imageUrl, String country) {
+
+    private void registerUser(String username, String email, String password, String country) {
         progressDialog.show();
+
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         String userId = firebaseAuth.getCurrentUser().getUid();
-                        UserModel userModel = new UserModel(userId, username, email, password, imageUrl, country);
+                        String fileName = userId + "_" + System.currentTimeMillis() + ".jpg";
 
-                        firebaseFirestore.collection("users")
-                                .document(userId)
-                                .set(userModel)
-                                .addOnSuccessListener(unused -> {
+                        try {
+                            authManager.uploadImage(bitmap, fileName, "profileImages/", new AuthManager.OnImageUploadCallback() {
+                                @Override
+                                public void onSuccess(String imageUrl) {
+                                    UserModel userModel = new UserModel(userId, username, email, password, imageUrl, country);
+                                    firebaseFirestore.collection("users")
+                                            .document(userId)
+                                            .set(userModel)
+                                            .addOnSuccessListener(unused -> {
+                                                progressDialog.dismiss();
+                                                Toast.makeText(context, "Sign up successful", Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(context, LoginScreen.class));
+                                                finish();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                progressDialog.dismiss();
+                                                Toast.makeText(context, "Failed to save user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            });
+                                }
+
+                                @Override
+                                public void onFailure(String error) {
                                     progressDialog.dismiss();
-                                    Toast.makeText(context, "Sign up successful", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(context, LoginScreen.class));
-                                    finish();
-                                })
-                                .addOnFailureListener(e -> {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(context, "Failed to save user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
+                                    Toast.makeText(context, "Image upload failed: " + error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } catch (IOException e) {
+                            progressDialog.dismiss();
+                            e.printStackTrace();
+                            Toast.makeText(context, "Image processing error", Toast.LENGTH_SHORT).show();
+                        }
+
                     } else {
                         progressDialog.dismiss();
                         Toast.makeText(context, "Sign up failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
-
-   /* private File bitmapToFile(Bitmap bitmap, String name) throws IOException {
-        File f = new File(getCacheDir(), name);
-        f.createNewFile();
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        byte[] bitmapdata = bos.toByteArray();
-        FileOutputStream fos = new FileOutputStream(f);
-        fos.write(bitmapdata);
-        fos.flush();
-        fos.close();
-        return f;
-    }
-
-    */
-
 }

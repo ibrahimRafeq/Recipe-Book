@@ -15,9 +15,18 @@
         android:theme="@style/Theme.RecipesBook"
         tools:targetApi="31">
         <activity
+            android:name=".ui_screens.FavoritesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui_screens.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui_screens.ChangePaswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RecipesBook" />
+        <activity
             android:name=".ui_screens.ProfiloActivity"
-            android:exported="false" >
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".ui_screens.ForgetPasswordScreen"
             android:exported="false" />
@@ -29,8 +38,7 @@
             android:exported="false" />
         <activity
             android:name=".ui_screens.LoginScreen"
-            android:exported="true" >
-            
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,9 +47,7 @@
         </activity>
         <activity
             android:name=".ActivityMain"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
     </application>
 
 </manifest>

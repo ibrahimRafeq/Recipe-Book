@@ -1,6 +1,8 @@
 package com.example.recipesbook.ui_screens;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -8,12 +10,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.recipesbook.databinding.ActivityProfiloBinding;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.squareup.picasso.Picasso;
 
 public class ProfiloActivity extends AppCompatActivity {
 
@@ -38,24 +36,42 @@ public class ProfiloActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
 
-                        String name = documentSnapshot.getString("name");
+                        String name = documentSnapshot.getString("username");
                         String email = documentSnapshot.getString("email");
                         String country = documentSnapshot.getString("country");
                         String imageUrl = documentSnapshot.getString("image");
 
                         binding.userNameTV.setText(name);
                         binding.emailTV.setText(email);
-                        if (imageUrl != null && !imageUrl.isEmpty()) {
-                            Picasso.get()
-                                    .load(imageUrl)
-                                    .into(binding.imgProfile3);
+                        SharedPreferences prefs = getSharedPreferences("profile", MODE_PRIVATE);
+                        String imageUriString = prefs.getString("image_uri", null);
+
+                        if (imageUriString != null) {
+                            Uri imageUri = Uri.parse(imageUriString);
+
+                            binding.imgProfile3.setImageURI(imageUri);
                         }
+
 
                     }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Data loading failed", Toast.LENGTH_SHORT).show();
                 });
+
+        binding.btnFavorites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfiloActivity.this, FavoritesActivity.class));
+            }
+        });
+
+        binding.bntSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.settingsDrawer.openDrawer(Gravity.START);
+            }
+        });
 
         binding.btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,57 +90,10 @@ public class ProfiloActivity extends AppCompatActivity {
             }
         });
 
-
-        binding.bntSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.settingsDrawer.openDrawer(Gravity.LEFT);
-            }
-        });
-
         binding.btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            }
-        });
-    }
-
-    private void changePassword(String oldPassword, String newPassword) {
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user == null) {
-            Toast.makeText(this, "لا يوجد مستخدم مسجل دخول", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String email = user.getEmail();
-
-        AuthCredential credential =
-                EmailAuthProvider.getCredential(email, oldPassword);
-
-        // إعادة التوثيق
-        user.reauthenticate(credential).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-
-                // تغيير كلمة السر
-                user.updatePassword(newPassword)
-                        .addOnCompleteListener(task2 -> {
-                            if (task2.isSuccessful()) {
-                                Toast.makeText(this,
-                                        "تم تغيير كلمة السر بنجاح ✅",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(this,
-                                        "فشل تغيير كلمة السر ❌",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-            } else {
-                Toast.makeText(this,
-                        "كلمة السر القديمة غير صحيحة ❌",
-                        Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(ProfiloActivity.this, ChangePasswordActivity.class));
             }
         });
     }

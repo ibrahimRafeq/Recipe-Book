@@ -1,17 +1,23 @@
 package com.example.recipesbook.ui_screens;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.recipesbook.R;
 import com.example.recipesbook.databinding.ActivityProfiloBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class ProfiloActivity extends AppCompatActivity {
 
@@ -43,14 +49,38 @@ public class ProfiloActivity extends AppCompatActivity {
 
                         binding.userNameTV.setText(name);
                         binding.emailTV.setText(email);
-                        SharedPreferences prefs = getSharedPreferences("profile", MODE_PRIVATE);
-                        String imageUriString = prefs.getString("image_uri", null);
 
-                        if (imageUriString != null) {
-                            Uri imageUri = Uri.parse(imageUriString);
 
-                            binding.imgProfile3.setImageURI(imageUri);
+
+
+                        if (imageUrl != null && !imageUrl.isEmpty()) {
+
+                            Picasso.get()
+                                    .load(imageUrl)
+                                    .error(R.drawable.man)
+                                    .into(binding.imgProfile3, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.d("PICASSO", "Image loaded successfully");
+
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+                                            Log.e("PICASSO", "Error loading image", e);
+
+                                        }
+                                    });
+
+                        } else {
+                            binding.imgProfile3.setImageResource(R.drawable.baseline_account_circle_24);
                         }
+
+
+
+
+
+
 
 
                     }

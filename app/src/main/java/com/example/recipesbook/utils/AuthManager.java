@@ -61,7 +61,7 @@ public class AuthManager {
     public void uploadImage(Bitmap bitmap, String fileName, String path, OnImageUploadCallback callback) throws IOException {
 
         File file = bitmapToFile(bitmap, fileName);
-        String baseUrl = "https://qzetvtuhlgofxvhksfet.supabase.co";
+        String baseUrl = "https://qzetvtuhlgofxvhksfet.supabase.co/";
         String apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6ZXR2dHVobGdvZnh2aGtzZmV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTAwNDAsImV4cCI6MjA4Njk4NjA0MH0.5Q3fQ09p5IQkVaLKO7hYQfY55mLhRw3gCgNUgdo9SJY";
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();

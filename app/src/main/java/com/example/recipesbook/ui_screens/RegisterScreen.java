@@ -9,24 +9,17 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.recipesbook.R;
 import com.example.recipesbook.databinding.ActivityRegisterScreenBinding;
 import com.example.recipesbook.models.UserModel;
 import com.example.recipesbook.utils.AuthManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.io.IOException;
 
 public class RegisterScreen extends AppCompatActivity {

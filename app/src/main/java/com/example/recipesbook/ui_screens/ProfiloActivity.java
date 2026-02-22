@@ -96,6 +96,13 @@ public class ProfiloActivity extends AppCompatActivity {
                 startActivity(new Intent(ProfiloActivity.this, ChangePasswordActivity.class));
             }
         });
+
+        binding.bntEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfiloActivity.this, EditProfileActivity.class));
+            }
+        });
     }
 
 }

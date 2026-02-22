@@ -83,7 +83,5 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.11.0'
 
     implementation platform("io.github.jan-tennert.supabase:bom:2.5.0")
-    implementation 'com.google.android.material:material:1.10.0'
-
-
+    implementation 'com.google.android.material:material:1.11.0'
 }

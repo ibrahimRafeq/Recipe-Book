@@ -87,14 +87,15 @@
                 tools:ignore="TextSizeCheck" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/bntEditProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:drawableLeft="@drawable/baseline_border_color_24"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/baseline_border_color"
                 android:drawablePadding="@dimen/_8sdp"
                 android:text="Edit Profile"
                 app:layout_constraintEnd_toEndOf="@+id/emailTV"
+                app:layout_constraintHorizontal_bias="0.521"
                 app:layout_constraintStart_toStartOf="@+id/emailTV"
                 app:layout_constraintTop_toBottomOf="@+id/emailTV" />
 
@@ -110,7 +111,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button">
+                app:layout_constraintTop_toBottomOf="@+id/bntEditProfile">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

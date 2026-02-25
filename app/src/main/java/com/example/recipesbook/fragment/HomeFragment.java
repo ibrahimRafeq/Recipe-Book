@@ -27,11 +27,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private FirebaseFirestore firestore;
@@ -42,33 +38,16 @@ public class HomeFragment extends Fragment {
     private String currentCategory = "All Recipes";
 
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
 
     public HomeFragment() {
-        // Required empty public constructor
+
     }
 
 
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -76,7 +55,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         firestore = FirebaseFirestore.getInstance();
-        sharedPreferences = requireActivity().getSharedPreferences("UserSession", MODE_PRIVATE);
+        sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", MODE_PRIVATE);
 
         initLoadingDialog();
         showLoading();
@@ -157,7 +136,7 @@ public class HomeFragment extends Fragment {
                     if (!querySnapshot.isEmpty()) {
                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                             String recipeId = document.getId();
-                            String imageUrl = document.getString("image");
+                            String publisherName = document.getString("publisherName");
                             String title = document.getString("title");
                             String ingredients = document.getString("ingredients");
                             String steps = document.getString("steps");
@@ -165,7 +144,7 @@ public class HomeFragment extends Fragment {
                             String userId = document.getString("userId");
                             String videoUrl = document.getString("videoUrl");
 
-                            RecipeModel recipe = new RecipeModel(recipeId, imageUrl, title, ingredients, steps, category, userId, videoUrl);
+                            RecipeModel recipe = new RecipeModel(recipeId,publisherName, title, ingredients, steps, category, userId, videoUrl);
                             allRecipes.add(recipe);
                         }
 

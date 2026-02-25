@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/image_profile"
+            android:id="@+id/imageProfile"
             android:layout_width="@dimen/_55sdp"
             android:layout_height="@dimen/_55sdp"
             android:layout_marginTop="@dimen/_40ssp"
@@ -29,9 +29,9 @@
             android:textColor="@color/primary"
             android:textSize="@dimen/_16ssp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/image_profile"
-            app:layout_constraintStart_toStartOf="@id/image_profile"
-            app:layout_constraintTop_toBottomOf="@id/image_profile" />
+            app:layout_constraintEnd_toEndOf="@id/imageProfile"
+            app:layout_constraintStart_toStartOf="@id/imageProfile"
+            app:layout_constraintTop_toBottomOf="@id/imageProfile" />
 
         <TextView
             android:id="@+id/tv_sign_up"
@@ -42,8 +42,8 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_12ssp"
             android:textStyle="normal"
-            app:layout_constraintEnd_toEndOf="@id/image_profile"
-            app:layout_constraintStart_toStartOf="@id/image_profile"
+            app:layout_constraintEnd_toEndOf="@id/imageProfile"
+            app:layout_constraintStart_toStartOf="@id/imageProfile"
             app:layout_constraintTop_toBottomOf="@id/tv_app_name" />
 
         <TextView

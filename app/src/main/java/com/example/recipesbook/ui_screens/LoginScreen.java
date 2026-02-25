@@ -9,76 +9,94 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.example.recipesbook.databinding.ActivityLoginScreenBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginScreen extends AppCompatActivity {
+
     private ActivityLoginScreenBinding binding;
-    private final Context context = LoginScreen.this;
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firestore;
     private ProgressDialog progressDialog;
+    private final Context context = LoginScreen.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        binding.tvDonTHaveAnAccount.setOnClickListener(view -> startActivity(new Intent(context, RegisterScreen.class)));
-        binding.tvForgotPassword.setOnClickListener(v -> {
-            startActivity(new Intent(context, ForgetPasswordScreen.class));
-        });
 
         firebaseAuth = FirebaseAuth.getInstance();
-        login();
-        showLoadingDialog();
+        firestore = FirebaseFirestore.getInstance();
 
-
+        setupProgressDialog();
+        setupClickListeners();
     }
 
-    private void login() {
-        binding.loginButton.setOnClickListener(v -> {
-            String email = binding.edEmail.getEditText().getText().toString().trim();
-            String password = binding.edPassword.getEditText().getText().toString().trim();
+    private void setupClickListeners() {
+        binding.tvDonTHaveAnAccount.setOnClickListener(v ->
+                startActivity(new Intent(context, RegisterScreen.class))
+        );
 
-            if (checkData(email, password)) {
-                progressDialog.show();
-                firebaseAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(this, task -> {
-                            progressDialog.dismiss();
-                            if (task.isSuccessful()) {
-                                String userId = firebaseAuth.getCurrentUser().getUid();
-                                saveLoginSession(email, userId);
-                                 startActivity(new Intent(context, MainHomePage.class));
-                                Toast.makeText(context, "Logged is Successfully", Toast.LENGTH_SHORT).show();
-                               finish();
-                            } else {
-                                Toast.makeText(this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            }
-        });
+        binding.tvForgotPassword.setOnClickListener(v ->
+                startActivity(new Intent(context, ForgetPasswordScreen.class))
+        );
+
+        binding.loginButton.setOnClickListener(v -> loginUser());
     }
 
+    private void loginUser() {
+        String email = binding.edEmail.getEditText().getText().toString().trim();
+        String password = binding.edPassword.getEditText().getText().toString().trim();
 
-    private void showLoadingDialog() {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please wait...");
-        progressDialog.setCancelable(false);
+        if (!isValidData(email, password)) return;
+
+        progressDialog.show();
+
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        String userId = firebaseAuth.getCurrentUser().getUid();
+                        firestore.collection("users")
+                                .document(userId)
+                                .get()
+                                .addOnSuccessListener(document -> {
+                                    progressDialog.dismiss();
+
+                                    if (document.exists()) {
+                                        String userName = document.getString("username");
+                                        saveLoginSession(email, userId, userName);
+
+                                        startActivity(new Intent(context, MainHomePage.class));
+                                        finish();
+                                        Toast.makeText(context, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, "User data not found", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context, "Failed to fetch user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        progressDialog.dismiss();
+                        Toast.makeText(this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-
-    private boolean checkData(String email, String password) {
-
-
+    private boolean isValidData(String email, String password) {
         boolean isValid = true;
+
         binding.edEmail.setError(null);
         binding.edPassword.setError(null);
 
         if (email.isEmpty()) {
             binding.edEmail.setError("Please enter your email");
             isValid = false;
-        } else if (!isValidEmail(email)) {
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.edEmail.setError("Invalid email format");
             isValid = false;
         }
@@ -94,17 +112,19 @@ public class LoginScreen extends AppCompatActivity {
         return isValid;
     }
 
-
-    private boolean isValidEmail(String email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    private void setupProgressDialog() {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
     }
 
-    private void saveLoginSession(String email, String userId) {
+    private void saveLoginSession(String email, String userId, String userName) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isLoggedIn", true);
         editor.putString("userEmail", email);
         editor.putString("userId", userId);
+        editor.putString("userName", userName);
         editor.apply();
     }
 }

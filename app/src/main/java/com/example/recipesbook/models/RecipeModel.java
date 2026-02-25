@@ -2,7 +2,7 @@ package com.example.recipesbook.models;
 
 public class RecipeModel {
     private String id;
-    private String image;
+    private String publisherName;
     private String title;
     private String ingredients;
     private String steps;
@@ -11,9 +11,9 @@ public class RecipeModel {
     private String videoUrl;
 
 
-    public RecipeModel(String id, String image, String title, String ingredients, String steps, String category, String userId, String videoUrl) {
+    public RecipeModel(String id, String publisherName, String title, String ingredients, String steps, String category, String userId, String videoUrl) {
         this.id = id;
-        this.image = image;
+        this.publisherName = publisherName;
         this.title = title;
         this.ingredients = ingredients;
         this.steps = steps;
@@ -28,14 +28,6 @@ public class RecipeModel {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getTitle() {
@@ -85,4 +77,13 @@ public class RecipeModel {
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
     }
+
+    public String getPublisherName() {
+        return publisherName;
+    }
+
+    public void setPublisherName(String publisherName) {
+        this.publisherName = publisherName;
+    }
+
 }

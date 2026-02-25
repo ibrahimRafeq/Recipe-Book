@@ -17,6 +17,7 @@ import com.example.recipesbook.ui_screens.RecipeDetailScreen;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Random;
 
 public class RecipesAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<RecipeModel> models;
@@ -39,11 +40,19 @@ public class RecipesAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         RecipeViewHolder viewHolder = (RecipeViewHolder) holder;
         try {
-            Picasso.get()
-                    .load(models.get(position).getImage())
-                    .placeholder(R.drawable.img)
-                    .error(R.drawable.img)
-                    .into(viewHolder.binding.imageRecipe);
+            int[] images = {
+                    R.drawable.image_food,
+                    R.drawable.image_food_2,
+                    R.drawable.cover_food_rc
+            };
+
+            int randomIndex = new Random().nextInt(images.length);
+
+            viewHolder.binding.imageRecipe.setImageDrawable(
+                    viewHolder.itemView.getContext().getResources().getDrawable(images[randomIndex])
+            );
+            viewHolder.binding.imagePublisher.setImageResource(R.drawable.user_image);
+            viewHolder.binding.tvPublisherName.setText(models.get(position).getPublisherName());
             viewHolder.binding.tvRecipeName.setText(models.get(position).getTitle());
             viewHolder.binding.tvDescription.setText(models.get(position).getIngredients());
             viewHolder.binding.tvCategory.setText(models.get(position).getCategory());

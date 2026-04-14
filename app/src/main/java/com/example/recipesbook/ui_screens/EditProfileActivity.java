@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EditProfileActivity extends AppCompatActivity {
-
     private ActivityEditProfileBinding binding;
     private FirebaseFirestore db;
     private FirebaseAuth auth;

@@ -21,13 +21,8 @@
             android:name=".ui_screens.ChangePasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".ui_screens.ChangePaswordActivity"
-            android:exported="false"
-            android:theme="@style/Theme.RecipesBook" />
-        <activity
             android:name=".ui_screens.ProfiloActivity"
             android:exported="false">
-
         </activity>
         <activity
             android:name=".ui_screens.ForgetPasswordScreen"
@@ -49,7 +44,7 @@
         </activity>
         <activity
             android:name=".ActivityMain"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>

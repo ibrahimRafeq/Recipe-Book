@@ -1,11 +1,12 @@
 package com.example.recipesbook.ui_screens;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-import androidx.activity.EdgeToEdge;
+
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.recipesbook.R;
+
 import com.example.recipesbook.databinding.ActivityChangePasswordBinding;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -13,7 +14,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class ChangePasswordActivity extends AppCompatActivity {
-    ActivityChangePasswordBinding binding;
+    private ActivityChangePasswordBinding binding;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,59 +23,63 @@ public class ChangePasswordActivity extends AppCompatActivity {
         binding = ActivityChangePasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.saveChange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String oldPassword = binding.oldPassword.getText().toString();
-                String newPassword = binding.newPassword.getText().toString();
-                String newPassword2 = binding.newPassword2.getText().toString();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Updating password...");
+        progressDialog.setCancelable(false);
 
-                if (newPassword.equals(newPassword2)){
-                    changePassword(oldPassword, newPassword);
-                }
+        binding.btnBack.setOnClickListener(v -> finish());
+
+        binding.saveChange.setOnClickListener(v -> {
+            String oldPass = binding.oldPassword.getText().toString().trim();
+            String newPass = binding.newPassword.getText().toString().trim();
+            String confirmPass = binding.newPassword2.getText().toString().trim();
+
+            if (validate(oldPass, newPass, confirmPass)) {
+                updatePassword(oldPass, newPass);
             }
         });
-
     }
 
-    private void changePassword(String oldPassword, String newPassword) {
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user == null) {
-            Toast.makeText(this, "لا يوجد مستخدم مسجل دخول", Toast.LENGTH_SHORT).show();
-            return;
+    private boolean validate(String oldPass, String newPass, String confirmPass) {
+        if (oldPass.isEmpty()) {
+            binding.oldPassword.setError("Current password is required");
+            return false;
         }
+        if (newPass.length() < 6) {
+            binding.newPassword.setError("Password must be at least 6 characters");
+            return false;
+        }
+        if (!newPass.equals(confirmPass)) {
+            binding.newPassword2.setError("Passwords do not match");
+            return false;
+        }
+        return true;
+    }
 
-        String email = user.getEmail();
+    private void updatePassword(String oldPassword, String newPassword) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null || user.getEmail() == null) return;
 
-        AuthCredential credential =
-                EmailAuthProvider.getCredential(email, oldPassword);
+        progressDialog.show();
 
-        // إعادة التوثيق
+        AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
+
         user.reauthenticate(credential).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-
-                // تغيير كلمة السر
-                user.updatePassword(newPassword)
-                        .addOnCompleteListener(task2 -> {
-                            if (task2.isSuccessful()) {
-                                Toast.makeText(this,
-                                        "تم تغيير كلمة السر بنجاح ✅",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(this,
-                                        "فشل تغيير كلمة السر ❌",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
+                user.updatePassword(newPassword).addOnCompleteListener(updateTask -> {
+                    progressDialog.dismiss();
+                    if (updateTask.isSuccessful()) {
+                        Toast.makeText(this, "Password updated successfully!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Failed to update password. Try again.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else {
-                Toast.makeText(this,
-                        "كلمة السر القديمة غير صحيحة ❌",
-                        Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                binding.oldPassword.setError("Incorrect current password");
+                Toast.makeText(this, "Authentication failed. Check your current password.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 }

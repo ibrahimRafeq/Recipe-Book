@@ -1,5 +1,6 @@
 package com.example.recipesbook.ui_screens;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +11,6 @@ import com.example.recipesbook.R;
 import com.example.recipesbook.databinding.ActivityMainHomePageBinding;
 import com.example.recipesbook.fragment.AddFragment;
 import com.example.recipesbook.fragment.HomeFragment;
-import com.example.recipesbook.fragment.ProfileFragment;
 
 public class MainHomePage extends AppCompatActivity {
     ActivityMainHomePageBinding binding;
@@ -18,28 +18,33 @@ public class MainHomePage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityMainHomePageBinding.inflate(getLayoutInflater());
+        binding = ActivityMainHomePageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setUpFragment();
-
     }
+
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(binding.container.getId(), fragment)
                 .commit();
     }
+
     private void setUpFragment() {
         loadFragment(new HomeFragment());
         binding.bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home) {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
                 loadFragment(new HomeFragment());
-            } else if (item.getItemId() == R.id.nav_add) {
+                return true;
+            } else if (id == R.id.nav_add) {
                 loadFragment(new AddFragment());
-            } else if (item.getItemId() == R.id.nav_profile) {
-                loadFragment(new ProfileFragment());
+                return true;
+            } else if (id == R.id.nav_profile) {
+                // الانتقال إلى شاشة ProfiloActivity بدلاً من الفراغمنت
+                startActivity(new Intent(MainHomePage.this, ProfiloActivity.class));
+                return false; // نرجع false حتى لا يتم تظليل أيقونة البروفايل في الأسفل إذا كنت ستنتقل لنشاط جديد
             }
-            return true;
+            return false;
         });
     }
-
 }

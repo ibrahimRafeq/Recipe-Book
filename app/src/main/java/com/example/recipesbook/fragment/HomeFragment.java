@@ -3,6 +3,7 @@ package com.example.recipesbook.fragment;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -19,6 +20,7 @@ import com.example.recipesbook.R;
 import com.example.recipesbook.adapters.RecipesAdapter;
 import com.example.recipesbook.databinding.FragmentHomeBinding;
 import com.example.recipesbook.models.RecipeModel;
+import com.example.recipesbook.ui_screens.ProfiloActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -63,6 +65,12 @@ public class HomeFragment extends Fragment {
         getUserData();
         getAllCategories();
         setupSearchListener();
+
+        // إضافة مستمع للضغط على صورة البروفايل
+        binding.imageProfile.setOnClickListener(v -> {
+            startActivity(new Intent(getActivity(), ProfiloActivity.class));
+        });
+
         return binding.getRoot();
     }
     private void initLoadingDialog() {

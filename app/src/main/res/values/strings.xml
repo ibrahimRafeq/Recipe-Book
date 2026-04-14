@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Recipes Book</string>
     <string name="recipe_app">Recipe App!</string>
-    =======
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="thousands_of_tested_recipes">Thousands of tested recipes</string>
     <string name="sup_title_on_boarding">There is no need to fear failure. Tested recipes are guaranteed to work by our professional chefs.</string>
@@ -99,5 +99,4 @@
     </string>
 
 
-    >>>>>>> main
 </resources>

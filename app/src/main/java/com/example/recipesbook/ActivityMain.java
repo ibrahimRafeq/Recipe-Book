@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.recipesbook.databinding.ActivityMainBinding;
+import com.example.recipesbook.ui_screens.MainHomePage;
 import com.example.recipesbook.ui_screens.OnBoardingScreen;
 
 
@@ -34,8 +36,7 @@ public class ActivityMain extends AppCompatActivity {
 
             Intent nextIntent;
             if (isLoggedIn) {
-                nextIntent =new Intent(context, OnBoardingScreen.class);                //nextIntent = new Intent(context, MainHomePage.class);
-               // Toast.makeText(context, "Logged go to Home Page ", Toast.LENGTH_SHORT).show();
+                nextIntent = new Intent(context, MainHomePage.class);
             } else {
                 nextIntent =new Intent(context, OnBoardingScreen.class);
             }

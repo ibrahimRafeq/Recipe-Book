@@ -70,6 +70,16 @@ dependencies {
 
     // Cloud Storage
     implementation 'com.google.firebase:firebase-storage'
+    // Picasso for image loading
+    implementation 'com.squareup.picasso:picasso:2.8'
+
+    // Retrofit for networking
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    // Gson converter for Retrofit
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+
 
     // download the picture
     implementation 'com.squareup.picasso:picasso:2.71828'

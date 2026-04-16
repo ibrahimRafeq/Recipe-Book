@@ -4,9 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.recipesbook.databinding.ActivityForgetPasswordScreenBinding;
 import com.google.firebase.auth.FirebaseAuth;
 

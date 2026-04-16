@@ -2,11 +2,8 @@ package com.example.recipesbook.ui_screens;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.recipesbook.databinding.ActivityChangePasswordBinding;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -45,7 +42,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             binding.oldPassword.setError("Current password is required");
             return false;
         }
-        if (newPass.length() < 6) {
+        if (newPass.length() >= 6) {
             binding.newPassword.setError("Password must be at least 6 characters");
             return false;
         }
